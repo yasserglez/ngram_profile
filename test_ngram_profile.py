@@ -4,13 +4,15 @@ import os
 import json
 import unittest
 
-from ngram_profile import NGramProfile, CharNGramProfile
+import ngram_profile
 
 
-class TestNGramProfile(unittest.TestCase):
+class CommonNGramProfileTests(object):
+
+    profileClass = None
 
     def test_init(self):
-        profile = NGramProfile()
+        profile = self.profileClass()
         self.assertEqual(len(profile), 0)
 
     def test_json_roundtrip(self):
@@ -18,7 +20,7 @@ class TestNGramProfile(unittest.TestCase):
         tmp_file = 'test_json_roundtrip.json'
         with open(tmp_file, 'w') as fd:
             fd.write(json_profile)
-        profile = NGramProfile.from_json(tmp_file)
+        profile = self.profileClass.from_json(tmp_file)
         os.remove(tmp_file)
         self.assertEqual(len(profile), 3)
         self.assertEqual(profile[u'a'], 0.5)
@@ -29,16 +31,33 @@ class TestNGramProfile(unittest.TestCase):
             self.assertEqual(json.load(fd), json.loads(json_profile))
         os.remove(tmp_file) 
 
+    def test_normalize_unicode_output(self):
+        profile = self.profileClass()
+        normalized = profile.normalize(u'abc')
+        self.assertTrue(isinstance(normalized, unicode))
+
+
+class TestNGramProfile(CommonNGramProfileTests, unittest.TestCase):
+
+    profileClass = ngram_profile.NGramProfile
+
     def test_normalize(self):
-        profile = NGramProfile()
+        profile = self.profileClass()
         x = u'abc'
         y = profile.normalize(x)
-        self.assertTrue(isinstance(y, unicode))
         self.assertEqual(x, y)
 
     def test_tokenize(self):
-        profile = NGramProfile()
+        profile = ngram_profile.NGramProfile()
         self.assertRaises(NotImplementedError, profile.tokenize, u'')
+
+
+class TestCharNGramProfile(CommonNGramProfileTests, unittest.TestCase):
+
+    profileClass = ngram_profile.CharNGramProfile
+
+    def test_tokenize(self):
+        self.fail('not yet implemented')
 
 
 if __name__ == '__main__':
