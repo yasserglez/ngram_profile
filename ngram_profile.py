@@ -1,4 +1,8 @@
-"""Text classification based on n-grams."""
+# -*- coding: utf-8 -*-
+
+"""
+Text classification based on n-grams.
+"""
 
 import json
 

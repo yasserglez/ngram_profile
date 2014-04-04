@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
+
 import os
 import json
 import unittest
 
-from ngram_profile import NGramProfile
+from ngram_profile import NGramProfile, CharNGramProfile
 
 
 class TestNGramProfile(unittest.TestCase):
@@ -19,9 +21,9 @@ class TestNGramProfile(unittest.TestCase):
         profile = NGramProfile.from_json(tmp_file)
         os.remove(tmp_file)
         self.assertEqual(len(profile), 3)
-        self.assertEqual(profile['a'], 0.5)
-        self.assertEqual(profile['b'], 0.3)
-        self.assertEqual(profile['c'], 0.2)
+        self.assertEqual(profile[u'a'], 0.5)
+        self.assertEqual(profile[u'b'], 0.3)
+        self.assertEqual(profile[u'c'], 0.2)
         profile.save_as_json(tmp_file)
         with open(tmp_file, 'r') as fd:
             self.assertEqual(json.load(fd), json.loads(json_profile))
@@ -29,11 +31,14 @@ class TestNGramProfile(unittest.TestCase):
 
     def test_normalize(self):
         profile = NGramProfile()
-        self.assertEqual(profile.normalize('abc'), 'abc')
+        x = u'abc'
+        y = profile.normalize(x)
+        self.assertTrue(isinstance(y, unicode))
+        self.assertEqual(x, y)
 
     def test_tokenize(self):
         profile = NGramProfile()
-        self.assertRaises(NotImplementedError, profile.tokenize, '')
+        self.assertRaises(NotImplementedError, profile.tokenize, u'')
 
 
 if __name__ == '__main__':
