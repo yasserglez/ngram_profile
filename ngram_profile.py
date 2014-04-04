@@ -57,6 +57,7 @@ class NGramProfile(object):
         Not implemented by default. Override in a subclass to provide an n-gram
         interpretation (i.e. character n-grams, word n-grams, etc).
         """
+        raise NotImplementedError()
 
     def jaccard_dissimilarity(self, other):
         """One minus the Jaccard similarity coefficient.
