@@ -81,3 +81,10 @@ class NGramProfile(object):
         Categorization." In Proceedings of the 3rd Annual Symposium on Document
         Analysis and Information Retrieval, SDAIR'94, Las Vegas, US, pp. 161-175.
         """
+
+
+class CharNGramProfile(NGramProfile):
+    """Character-based n-gram profile."""
+
+    def tokenize(self, text):
+        """Split text into characters."""
