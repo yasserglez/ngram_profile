@@ -49,6 +49,7 @@ class NGramProfile(object):
 
     def normalize(self, text):
         """Text normalization (identity function by default)."""
+        return text
 
     def tokenize(self, text):
         """Split text into tokens.
