@@ -10,6 +10,7 @@ class NGramProfile(object):
 
     def __init__(self):
         """Initialize an empty profile."""
+        self._ngrams = {}
 
     @classmethod
     def from_json(cls, file_path):
@@ -21,15 +22,19 @@ class NGramProfile(object):
 
     def __len__(self):
         """Number of n-grams in the profile."""
+        return len(self._ngrams)
 
     def __iter__(self):
         """Return an iterator over the n-grams."""
+        return self._ngrams.iterkeys()
 
     def __getitem__(self, ngram):
         """Return the n-gram frequency (zero if it does not appear)."""
+        return self._ngrams.get(ngram, 0)
 
     def __contains__(self, ngram):
         """Check if the profile contains an n-gram."""
+        return ngram in self._ngrams
 
     def save_as_json(self, file_path):
         """Save the profile to a file in JSON format."""
