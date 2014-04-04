@@ -90,9 +90,6 @@ class NGramProfile(object):
 class CharNGramProfile(NGramProfile):
     """Character-based n-gram profile."""
 
-    def normalize(self, text):
-        """Text normalization (identity function by default)."""
-        return text
-
     def tokenize(self, text):
         """Split text into characters."""
+        return iter(text)

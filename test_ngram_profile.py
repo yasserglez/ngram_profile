@@ -33,8 +33,8 @@ class CommonNGramProfileTests(object):
 
     def test_normalize_unicode_output(self):
         profile = self.profileClass()
-        normalized = profile.normalize(u'abc')
-        self.assertTrue(isinstance(normalized, unicode))
+        text = profile.normalize(u'abc')
+        self.assertTrue(isinstance(text, unicode))
 
 
 class TestNGramProfile(CommonNGramProfileTests, unittest.TestCase):
@@ -43,9 +43,8 @@ class TestNGramProfile(CommonNGramProfileTests, unittest.TestCase):
 
     def test_normalize(self):
         profile = self.profileClass()
-        x = u'abc'
-        y = profile.normalize(x)
-        self.assertEqual(x, y)
+        text = u'abc'
+        self.assertEqual(text, profile.normalize(text))
 
     def test_tokenize(self):
         profile = ngram_profile.NGramProfile()
@@ -57,7 +56,9 @@ class TestCharNGramProfile(CommonNGramProfileTests, unittest.TestCase):
     profileClass = ngram_profile.CharNGramProfile
 
     def test_tokenize(self):
-        self.fail('not yet implemented')
+        profile = ngram_profile.CharNGramProfile()
+        text = u'the quick brown fox jumps over the lazy dog'
+        self.assertEqual(list(text), list(profile.tokenize(text)))
 
 
 if __name__ == '__main__':
