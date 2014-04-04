@@ -1,5 +1,7 @@
 """Text classification based on n-grams."""
 
+import json
+
 
 class NGramProfile(object):
     """Base class for n-gram profiles.
@@ -15,6 +17,10 @@ class NGramProfile(object):
     @classmethod
     def from_json(cls, file_path):
         """Load a profile previously saved in a JSON file."""
+        self = cls()
+        with open(file_path, 'r') as fd:
+            self._ngrams = json.load(fd)
+        return self
 
     @classmethod
     def from_corpus(cls, corpus, ngram_size, profile_len, profile_offset):
@@ -38,6 +44,8 @@ class NGramProfile(object):
 
     def save_as_json(self, file_path):
         """Save the profile to a file in JSON format."""
+        with open(file_path, 'w') as fd:
+            json.dump(self._ngrams, fd)
 
     def normalize(self, text):
         """Text normalization (identity function by default)."""
