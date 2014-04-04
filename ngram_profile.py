@@ -6,13 +6,13 @@ import json
 class NGramProfile(object):
     """Base class for n-gram profiles.
 
-    Not intended to be instantiated. Subclass and override tokenize to provide 
-    an n-gram interpretation (i.e. character n-grams, word n-grams, etc).
+    Subclass and override tokenize to provide an n-gram interpretation 
+    (i.e. character n-grams, word n-grams, etc).
     """
 
     def __init__(self):
         """Initialize an empty profile."""
-        self._ngrams = {}
+        self._ngrams = {} 
 
     @classmethod
     def from_json(cls, file_path):
@@ -85,6 +85,10 @@ class NGramProfile(object):
 
 class CharNGramProfile(NGramProfile):
     """Character-based n-gram profile."""
+
+    def normalize(self, text):
+        """Text normalization (identity function by default)."""
+        return text
 
     def tokenize(self, text):
         """Split text into characters."""
