@@ -90,6 +90,17 @@ class TestNGramProfile(unittest.TestCase):
             dissimilarity = profile1.jaccard_dissimilarity(profile2)
             self.assertEqual(dissimilarity, test_case[2])
 
+    def test_cng_dissimilarity(self):
+        ngram_sizes = (1, )
+        profile_len = 2
+        profile_offset = 0
+        profile1 = NGramProfile.from_text(u'abb', 
+                ngram_sizes, profile_len, profile_offset)
+        profile2 = NGramProfile.from_text(u'aac',
+                ngram_sizes, profile_len, profile_offset)
+        dissimilarity = profile1.cng_dissimilarity(profile2)
+        self.assertAlmostEqual(dissimilarity, 8.44, delta=0.01)
+
 
 if __name__ == '__main__':
     unittest.main()

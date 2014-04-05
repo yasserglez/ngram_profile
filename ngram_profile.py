@@ -126,6 +126,11 @@ class NGramProfile(object):
         of the Conference Pacific Association for Computational Linguistics, 
         PACLING'03, Nova Scotia, Canada, pp. 255-264.
         """
+        dissimilarity = 0.0
+        for ngram in set(self) | set(other):
+            dissimilarity += (2 * (self[ngram] - other[ngram]) / 
+                              (self[ngram] + other[ngram])) ** 2
+        return dissimilarity
 
     def out_of_place_dissimilarity(self, other):
         """Cavner-Trenkle out-of-place measure.
