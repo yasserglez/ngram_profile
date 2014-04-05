@@ -37,7 +37,7 @@ class TestNGramProfile(unittest.TestCase):
         self.assertTrue(isinstance(normalized_text, unicode))
         self.assertEqual(normalized_text, text)
 
-    def test_from_text_1gram(self):
+    def test_1gram(self):
         text = u'abcaab'
         ngram_sizes = (1, )
         profile_len = 3
@@ -47,7 +47,7 @@ class TestNGramProfile(unittest.TestCase):
         self.assertAlmostEqual(profile[u'b'], 0.33, delta=0.01)
         self.assertAlmostEqual(profile[u'c'], 0.16, delta=0.01)
 
-    def test_from_text_2gram(self):
+    def test_2gram(self):
         text = u'abcaab'
         ngram_sizes = (2, )
         profile_len = 4
@@ -58,7 +58,7 @@ class TestNGramProfile(unittest.TestCase):
         self.assertEqual(profile[u'ca'], 0.2)
         self.assertEqual(profile[u'aa'], 0.2)
 
-    def test_from_text_1gram_2gram_with_offset(self):
+    def test_1gram_and_2gram_with_offset(self):
         text = u'abcaab'
         ngram_sizes = (1, 2)
         profile_len = 4
@@ -69,6 +69,17 @@ class TestNGramProfile(unittest.TestCase):
         self.assertEqual(profile[u'bc'], 0.2)
         self.assertEqual(profile[u'ca'], 0.2)
         self.assertEqual(profile[u'aa'], 0.2)
+        
+    def test_jaccard_dissimilarity(self):
+        ngram_sizes = (1, )
+        profile_len = 6
+        profile_offset = 0
+        profile1 = NGramProfile.from_text(u'abcde', 
+                ngram_sizes, profile_len, profile_offset)
+        profile2 = NGramProfile.from_text(u'defgh',
+                ngram_sizes, profile_len, profile_offset)
+        dissimilarity = profile1.jaccard_dissimilarity(profile2)
+        self.assertEqual(dissimilarity, 0.75)
 
 
 if __name__ == '__main__':

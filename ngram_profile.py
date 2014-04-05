@@ -113,6 +113,9 @@ class NGramProfile(object):
 
         See e.g. http://en.wikipedia.org/wiki/Jaccard_index.
         """
+        s = set(self)
+        o = set(other)
+        return 1 - len(s & o) / float(len(s | o)) 
 
     def cng_dissimilarity(self, other):
         """Common N-Grams (CNG) profile dissimilarity.
