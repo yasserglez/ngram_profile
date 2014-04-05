@@ -69,17 +69,26 @@ class TestNGramProfile(unittest.TestCase):
         self.assertEqual(profile[u'bc'], 0.2)
         self.assertEqual(profile[u'ca'], 0.2)
         self.assertEqual(profile[u'aa'], 0.2)
-        
+
     def test_jaccard_dissimilarity(self):
+        test_cases = (
+            (u'', u'', 0),
+            (u'abc', u'', 1),
+            (u'', u'fgh', 1),
+            (u'abc', u'fgh', 1), 
+            (u'abcde', u'defgh', 0.75), 
+            (u'de', u'de', 0),
+        )
         ngram_sizes = (1, )
         profile_len = 6
         profile_offset = 0
-        profile1 = NGramProfile.from_text(u'abcde', 
-                ngram_sizes, profile_len, profile_offset)
-        profile2 = NGramProfile.from_text(u'defgh',
-                ngram_sizes, profile_len, profile_offset)
-        dissimilarity = profile1.jaccard_dissimilarity(profile2)
-        self.assertEqual(dissimilarity, 0.75)
+        for test_case in test_cases:
+            profile1 = NGramProfile.from_text(test_case[0], 
+                    ngram_sizes, profile_len, profile_offset)
+            profile2 = NGramProfile.from_text(test_case[1],
+                    ngram_sizes, profile_len, profile_offset)
+            dissimilarity = profile1.jaccard_dissimilarity(profile2)
+            self.assertEqual(dissimilarity, test_case[2])
 
 
 if __name__ == '__main__':

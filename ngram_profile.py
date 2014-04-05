@@ -93,7 +93,7 @@ class NGramProfile(object):
 
     def __getitem__(self, ngram):
         """Return the n-gram frequency (zero if it does not appear)."""
-        return self._ngrams.get(ngram, 0)
+        return self._ngrams.get(ngram, 0.0)
 
     def __contains__(self, ngram):
         """Check if the profile contains an n-gram."""
@@ -115,7 +115,8 @@ class NGramProfile(object):
         """
         s = set(self)
         o = set(other)
-        return 1 - len(s & o) / float(len(s | o)) 
+        similarity = len(s & o) / float(len(s | o)) if s or o else 1
+        return (1 - similarity)
 
     def cng_dissimilarity(self, other):
         """Common N-Grams (CNG) profile dissimilarity.
