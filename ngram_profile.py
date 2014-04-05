@@ -149,9 +149,9 @@ class NGramProfile(object):
                                   key=operator.itemgetter(1), reverse=True))
         dissimilarity = 0
         for j in xrange(len(sorted_other)):
-            try:
+            if sorted_other[j] in self:
                 i = sorted_self.index(sorted_other[j])
                 dissimilarity += abs(i - j)
-            except ValueError:
+            else:
                 dissimilarity += len(sorted_self)
         return dissimilarity
