@@ -101,6 +101,20 @@ class TestNGramProfile(unittest.TestCase):
         dissimilarity = profile1.cng_dissimilarity(profile2)
         self.assertAlmostEqual(dissimilarity, 8.44, delta=0.01)
 
+    def test_out_of_place_dissimilarity(self):
+        tmp_file = 'test_out_of_place_dissimilarity.json'
+        json_profile = '{"TH": 6, "ER": 5, "ON": 4, "LE": 3, "ING": 2, "AND": 1}'
+        with codecs.open(tmp_file, 'w', 'utf-8') as fd:
+            fd.write(json_profile)
+        profile1 = NGramProfile.from_json(tmp_file)
+        json_profile = '{"TH": 6, "ING": 5, "ON": 4, "ER": 3, "AND": 2, "ED": 1}'
+        with codecs.open(tmp_file, 'w', 'utf-8') as fd:
+            fd.write(json_profile)
+        profile2 = NGramProfile.from_json(tmp_file)        
+        os.remove(tmp_file)
+        dissimilarity = profile1.out_of_place_dissimilarity(profile2)
+        self.assertEqual(dissimilarity, 12)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -139,3 +139,19 @@ class NGramProfile(object):
         Categorization." In Proceedings of the 3rd Annual Symposium on Document
         Analysis and Information Retrieval, SDAIR'94, Las Vegas, US, pp. 161-175.
         """
+        # Based on the implementation provided by the textcat R package
+        # http://cran.r-project.org/web/packages/textcat/index.html.
+        sorted_self = map(operator.itemgetter(0),
+                          sorted(self._ngrams.iteritems(),
+                                 key=operator.itemgetter(1), reverse=True))
+        sorted_other = map(operator.itemgetter(0),
+                           sorted(other._ngrams.iteritems(),
+                                  key=operator.itemgetter(1), reverse=True))
+        dissimilarity = 0
+        for j in xrange(len(sorted_other)):
+            try:
+                i = sorted_self.index(sorted_other[j])
+                dissimilarity += abs(i - j)
+            except ValueError:
+                dissimilarity += len(sorted_self)
+        return dissimilarity
