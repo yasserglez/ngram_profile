@@ -39,7 +39,7 @@ class NGramProfile(object):
     @classmethod
     def from_file(cls, file_path, ngram_sizes, profile_len, profile_offset):
         """Build a profile from a UTF-8 encoded text file."""
-        profile = cls.from_files(cls, (file_path, ), ngram_sizes, 
+        profile = cls.from_files((file_path, ), ngram_sizes, 
                                  profile_len, profile_offset)
         return profile
 
