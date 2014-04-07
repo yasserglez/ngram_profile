@@ -37,11 +37,12 @@ class NGramProfile(object):
         return profile
 
     @classmethod
-    def from_file(cls, file_path, ngram_sizes, profile_len, profile_offset):
-        """Build a profile from a UTF-8 encoded text file."""
+    def from_files(cls, file_paths, ngram_sizes, profile_len, profile_offset):
+        """Build a profile from a list of UTF-8 encoded text files."""
         profile = cls()
-        with codecs.open(file_path, 'r', 'utf-8') as fd:
-            profile._count_ngrams(fd.read(), ngram_sizes)
+        for file_path in file_paths:
+            with codecs.open(file_path, 'r', 'utf-8') as fd:
+                profile._count_ngrams(fd.read(), ngram_sizes)
         profile._normalize_ngram_freqs(ngram_sizes)
         profile._build_ngram_profile(profile_len, profile_offset)
         return profile
@@ -49,14 +50,12 @@ class NGramProfile(object):
     @classmethod
     def from_dir(cls, dir_path, ngram_sizes, profile_len, profile_offset):
         """Build a profile from a directory containing UTF-8 encoded text files."""
-        profile = cls()
+        file_paths = []
         for dir_path, unused, file_names in os.walk(dir_path):
             for file_name in file_names:
                 file_path = os.path.join(dir_path, file_name)
-                with codecs.open(file_path, 'r', 'utf-8') as fd:
-                    profile._count_ngrams(fd.read(), ngram_sizes)
-        profile._normalize_ngram_freqs(ngram_sizes)
-        profile._build_ngram_profile(profile_len, profile_offset)
+                file_paths.append(file_path)
+        profile = cls.from_files(file_paths, ngram_sizes, profile_len, profile_offset)
         return profile
 
     def _count_ngrams(self, text, ngram_sizes):
