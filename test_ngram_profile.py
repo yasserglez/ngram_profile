@@ -1,18 +1,11 @@
-# -*- coding: utf-8 -*-
-# 
+#
 # Copyright 2014 Yasser Gonzalez Fernandez
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
 import os
 import json
@@ -42,7 +35,7 @@ class TestNGramProfile(unittest.TestCase):
         profile.save_as_json(tmp_file)
         with codecs.open(tmp_file, 'r', 'utf-8') as fd:
             self.assertEqual(json.load(fd), json.loads(json_profile))
-        os.remove(tmp_file) 
+        os.remove(tmp_file)
 
     def test_normalize(self):
         text = u'abc'
@@ -89,15 +82,15 @@ class TestNGramProfile(unittest.TestCase):
             (u'', u'', 0),
             (u'abc', u'', 1),
             (u'', u'fgh', 1),
-            (u'abc', u'fgh', 1), 
-            (u'abcde', u'defgh', 0.75), 
+            (u'abc', u'fgh', 1),
+            (u'abcde', u'defgh', 0.75),
             (u'de', u'de', 0),
         )
         ngram_sizes = (1, )
         profile_len = 6
         profile_offset = 0
         for test_case in test_cases:
-            profile1 = NGramProfile.from_text(test_case[0], 
+            profile1 = NGramProfile.from_text(test_case[0],
                     ngram_sizes, profile_len, profile_offset)
             profile2 = NGramProfile.from_text(test_case[1],
                     ngram_sizes, profile_len, profile_offset)
@@ -108,7 +101,7 @@ class TestNGramProfile(unittest.TestCase):
         ngram_sizes = (1, )
         profile_len = 2
         profile_offset = 0
-        profile1 = NGramProfile.from_text(u'abb', 
+        profile1 = NGramProfile.from_text(u'abb',
                 ngram_sizes, profile_len, profile_offset)
         profile2 = NGramProfile.from_text(u'aac',
                 ngram_sizes, profile_len, profile_offset)
@@ -124,7 +117,7 @@ class TestNGramProfile(unittest.TestCase):
         json_profile = '{"TH": 6, "ING": 5, "ON": 4, "ER": 3, "AND": 2, "ED": 1}'
         with codecs.open(tmp_file, 'w', 'utf-8') as fd:
             fd.write(json_profile)
-        profile2 = NGramProfile.from_json(tmp_file)        
+        profile2 = NGramProfile.from_json(tmp_file)
         os.remove(tmp_file)
         dissimilarity = profile1.out_of_place_dissimilarity(profile2)
         self.assertEqual(dissimilarity, 12)

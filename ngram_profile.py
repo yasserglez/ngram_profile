@@ -1,18 +1,11 @@
-# -*- coding: utf-8 -*-
-# 
+#
 # Copyright 2014 Yasser Gonzalez Fernandez
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
 """
 Text classification based on character n-grams.
@@ -26,12 +19,15 @@ import operator
 import heapq
 
 
+__version__ = '1.0.0'
+
+
 class NGramProfile(object):
     """Character n-gram profile."""
 
     def __init__(self):
         """Initialize an empty profile."""
-        self._ngrams = {} 
+        self._ngrams = {}
 
     @classmethod
     def from_json(cls, file_path):
@@ -53,7 +49,7 @@ class NGramProfile(object):
     @classmethod
     def from_file(cls, file_path, ngram_sizes, profile_len, profile_offset):
         """Build a profile from a UTF-8 encoded text file."""
-        profile = cls.from_files((file_path, ), ngram_sizes, 
+        profile = cls.from_files((file_path, ), ngram_sizes,
                                  profile_len, profile_offset)
         return profile
 
@@ -85,7 +81,7 @@ class NGramProfile(object):
             slices = [itertools.islice(text, i, None) for i in xrange(ngram_size)]
             for ngram_tokens in itertools.izip(*slices):
                 ngram = u''.join(ngram_tokens)
-                self._ngrams[ngram] = self._ngrams.get(ngram, 0) + 1 
+                self._ngrams[ngram] = self._ngrams.get(ngram, 0) + 1
 
     def _normalize_ngram_freqs(self, ngram_sizes):
         for ngram_size in ngram_sizes:
@@ -98,7 +94,7 @@ class NGramProfile(object):
                     self._ngrams[ngram] = self._ngrams[ngram] / ngram_count
 
     def _build_ngram_profile(self, profile_len, profile_offset):
-        top_ngrams = heapq.nlargest(profile_offset + profile_len, 
+        top_ngrams = heapq.nlargest(profile_offset + profile_len,
                                     self._ngrams.iteritems(),
                                     key=operator.itemgetter(1))
         self._ngrams = dict(top_ngrams[profile_offset:])
@@ -141,21 +137,21 @@ class NGramProfile(object):
     def cng_dissimilarity(self, other):
         """Common N-Grams (CNG) profile dissimilarity.
 
-        See Vlado Keselj, Fuchun Peng, Nick Cercone, and Calvin Thomas (2003). 
+        See Vlado Keselj, Fuchun Peng, Nick Cercone, and Calvin Thomas (2003).
         "N-gram-based Author Profiles for Authorship Attribution". In Proceedings
-        of the Conference Pacific Association for Computational Linguistics, 
+        of the Conference Pacific Association for Computational Linguistics,
         PACLING'03, Nova Scotia, Canada, pp. 255-264.
         """
         dissimilarity = 0.0
         for ngram in set(self) | set(other):
-            dissimilarity += (2 * (self[ngram] - other[ngram]) / 
+            dissimilarity += (2 * (self[ngram] - other[ngram]) /
                               (self[ngram] + other[ngram])) ** 2
         return dissimilarity
 
     def out_of_place_dissimilarity(self, other):
         """Cavner-Trenkle out-of-place measure.
 
-        See William B. Cavnar and John M. Trenkle (1994). "n-Gram-Based Text 
+        See William B. Cavnar and John M. Trenkle (1994). "n-Gram-Based Text
         Categorization." In Proceedings of the 3rd Annual Symposium on Document
         Analysis and Information Retrieval, SDAIR'94, Las Vegas, US, pp. 161-175.
         """
