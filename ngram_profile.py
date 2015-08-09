@@ -18,6 +18,9 @@ import itertools
 import operator
 import heapq
 
+from six import iterkeys, iteritems
+from six.moves import range, zip
+
 
 __version__ = '1.0.0'
 
@@ -78,24 +81,24 @@ class NGramProfile(object):
     def _count_ngrams(self, text, ngram_sizes):
         text = self.normalize(text)
         for ngram_size in ngram_sizes:
-            slices = [itertools.islice(text, i, None) for i in xrange(ngram_size)]
-            for ngram_tokens in itertools.izip(*slices):
+            slices = [itertools.islice(text, i, None) for i in range(ngram_size)]
+            for ngram_tokens in zip(*slices):
                 ngram = u''.join(ngram_tokens)
                 self._ngrams[ngram] = self._ngrams.get(ngram, 0) + 1
 
     def _normalize_ngram_freqs(self, ngram_sizes):
         for ngram_size in ngram_sizes:
             ngram_count = 0.0
-            for ngram in self._ngrams.iterkeys():
+            for ngram in iterkeys(self._ngrams):
                 if len(ngram) == ngram_size:
                     ngram_count += self._ngrams[ngram]
-            for ngram in self._ngrams.iterkeys():
+            for ngram in iterkeys(self._ngrams):
                 if len(ngram) == ngram_size:
                     self._ngrams[ngram] = self._ngrams[ngram] / ngram_count
 
     def _build_ngram_profile(self, profile_len, profile_offset):
         top_ngrams = heapq.nlargest(profile_offset + profile_len,
-                                    self._ngrams.iteritems(),
+                                    iteritems(self._ngrams),
                                     key=operator.itemgetter(1))
         self._ngrams = dict(top_ngrams[profile_offset:])
 
@@ -105,7 +108,7 @@ class NGramProfile(object):
 
     def __iter__(self):
         """Return an iterator over the n-grams."""
-        return self._ngrams.iterkeys()
+        return iterkeys(self._ngrams)
 
     def __getitem__(self, ngram):
         """Return the n-gram frequency (zero if it does not appear)."""
@@ -157,14 +160,14 @@ class NGramProfile(object):
         """
         # Based on the implementation provided by the textcat R package
         # http://cran.r-project.org/web/packages/textcat/index.html.
-        sorted_self = map(operator.itemgetter(0),
-                          sorted(self._ngrams.iteritems(),
-                                 key=operator.itemgetter(1), reverse=True))
-        sorted_other = map(operator.itemgetter(0),
-                           sorted(other._ngrams.iteritems(),
-                                  key=operator.itemgetter(1), reverse=True))
+        sorted_self = [ngram for ngram, freq in
+                       sorted(iteritems(self._ngrams),
+                              key=operator.itemgetter(1), reverse=True)]
+        sorted_other = [ngram for ngram, freq in
+                        sorted(iteritems(other._ngrams),
+                               key=operator.itemgetter(1), reverse=True)]
         dissimilarity = 0
-        for j in xrange(len(sorted_other)):
+        for j in range(len(sorted_other)):
             if sorted_other[j] in self:
                 i = sorted_self.index(sorted_other[j])
                 dissimilarity += abs(i - j)
