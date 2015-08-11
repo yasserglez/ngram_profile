@@ -41,7 +41,7 @@ class TestNGramProfile(unittest.TestCase):
         text = u'abcaab'
         ngram_sizes = (1, )
         profile_len = 3
-        profile = NGramProfile.from_text(text, ngram_sizes, profile_len, 0)
+        profile = NGramProfile.from_text(text, ngram_sizes, profile_len)
         self.assertEqual(len(profile), profile_len)
         self.assertEqual(profile[u'a'], 0.5)
         self.assertAlmostEqual(profile[u'b'], 0.33, delta=0.01)
@@ -51,24 +51,22 @@ class TestNGramProfile(unittest.TestCase):
         text = u'abcaab'
         ngram_sizes = (2, )
         profile_len = 4
-        profile = NGramProfile.from_text(text, ngram_sizes, profile_len, 0)
+        profile = NGramProfile.from_text(text, ngram_sizes, profile_len)
         self.assertEqual(len(profile), profile_len)
         self.assertEqual(profile[u'ab'], 0.4)
         self.assertEqual(profile[u'bc'], 0.2)
         self.assertEqual(profile[u'ca'], 0.2)
         self.assertEqual(profile[u'aa'], 0.2)
 
-    def test_1gram_and_2gram_with_offset(self):
+    def test_1gram_and_2gram(self):
         text = u'abcaab'
         ngram_sizes = (1, 2)
-        profile_len = 4
-        profile_offset = 2
-        profile = NGramProfile.from_text(text, ngram_sizes, profile_len, profile_offset)
+        profile_len = 3
+        profile = NGramProfile.from_text(text, ngram_sizes, profile_len)
         self.assertEqual(len(profile), profile_len)
+        self.assertEqual(profile[u'a'], 0.5)
+        self.assertEqual(profile[u'ab'], 0.4)
         self.assertAlmostEqual(profile[u'b'], 0.33, delta=0.01)
-        self.assertEqual(profile[u'bc'], 0.2)
-        self.assertEqual(profile[u'ca'], 0.2)
-        self.assertEqual(profile[u'aa'], 0.2)
 
     def test_jaccard_dissimilarity(self):
         test_cases = (
@@ -81,23 +79,17 @@ class TestNGramProfile(unittest.TestCase):
         )
         ngram_sizes = (1, )
         profile_len = 6
-        profile_offset = 0
         for test_case in test_cases:
-            profile1 = NGramProfile.from_text(test_case[0],
-                    ngram_sizes, profile_len, profile_offset)
-            profile2 = NGramProfile.from_text(test_case[1],
-                    ngram_sizes, profile_len, profile_offset)
+            profile1 = NGramProfile.from_text(test_case[0], ngram_sizes, profile_len)
+            profile2 = NGramProfile.from_text(test_case[1], ngram_sizes, profile_len)
             dissimilarity = profile1.jaccard_dissimilarity(profile2)
             self.assertEqual(dissimilarity, test_case[2])
 
     def test_cng_dissimilarity(self):
         ngram_sizes = (1, )
         profile_len = 2
-        profile_offset = 0
-        profile1 = NGramProfile.from_text(u'abb',
-                ngram_sizes, profile_len, profile_offset)
-        profile2 = NGramProfile.from_text(u'aac',
-                ngram_sizes, profile_len, profile_offset)
+        profile1 = NGramProfile.from_text(u'abb', ngram_sizes, profile_len)
+        profile2 = NGramProfile.from_text(u'aac', ngram_sizes, profile_len)
         dissimilarity = profile1.cng_dissimilarity(profile2)
         self.assertAlmostEqual(dissimilarity, 8.44, delta=0.01)
 
