@@ -3,8 +3,6 @@ import json
 import unittest
 import codecs
 
-from six import text_type
-
 from ngram_profile import NGramProfile
 
 
@@ -29,13 +27,6 @@ class TestNGramProfile(unittest.TestCase):
         with codecs.open(tmp_file, 'r', 'utf-8') as fd:
             self.assertEqual(json.load(fd), json.loads(json_profile))
         os.remove(tmp_file)
-
-    def test_normalize(self):
-        text = u'abc'
-        profile = NGramProfile()
-        normalized_text = profile.normalize(text)
-        self.assertTrue(isinstance(normalized_text, text_type))
-        self.assertEqual(normalized_text, text)
 
     def test_1gram(self):
         text = u'abcaab'

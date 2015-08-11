@@ -79,7 +79,6 @@ class NGramProfile(object):
         return profile
 
     def _count_ngrams(self, text, ngram_sizes):
-        text = self.normalize(text)
         for ngram_size in ngram_sizes:
             slices = [itertools.islice(text, i, None) for i in range(ngram_size)]
             for ngram_tokens in zip(*slices):
@@ -122,10 +121,6 @@ class NGramProfile(object):
         """Save the profile to a file in JSON format."""
         with open(file_path, 'w') as fd:
             json.dump(self._ngrams, fd)
-
-    def normalize(self, text):
-        """Text normalization (identity function by default)."""
-        return text
 
     def jaccard_dissimilarity(self, other):
         """One minus the Jaccard similarity coefficient.
