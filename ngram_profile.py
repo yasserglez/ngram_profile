@@ -12,12 +12,13 @@
 Text classification based on character n-grams.
 """
 
-import os
 import codecs
-import json
-import itertools
-import operator
+import collections
 import heapq
+import itertools
+import json
+import operator
+import os
 
 from six import iterkeys, iteritems
 from six.moves import range, zip
@@ -35,7 +36,7 @@ class NGramProfile(object):
 
     @classmethod
     def from_json(cls, file_path):
-        """Load a profile previously saved in a JSON file."""
+        """Load a profile previously saved as a JSON file."""
         profile = cls()
         with open(file_path, 'r') as fd:
             profile._ngrams = json.load(fd)
@@ -51,12 +52,6 @@ class NGramProfile(object):
         return profile
 
     @classmethod
-    def from_file(cls, file_path, ngram_sizes, profile_len):
-        """Build a profile from a UTF-8 encoded text file."""
-        profile = cls.from_files((file_path, ), ngram_sizes, profile_len)
-        return profile
-
-    @classmethod
     def from_files(cls, file_paths, ngram_sizes, profile_len):
         """Build a profile from a list of UTF-8 encoded text files."""
         profile = cls()
@@ -68,8 +63,14 @@ class NGramProfile(object):
         return profile
 
     @classmethod
+    def from_file(cls, file_path, ngram_sizes, profile_len):
+        """Build a profile from a UTF-8 encoded text file."""
+        profile = cls.from_files((file_path, ), ngram_sizes, profile_len)
+        return profile
+
+    @classmethod
     def from_dir(cls, dir_path, ngram_sizes, profile_len):
-        """Build a profile from a directory containing UTF-8 encoded text files."""
+        """Build a profile from a directory tree with UTF-8 encoded text files."""
         file_paths = []
         for dir_path, unused, file_names in os.walk(dir_path):
             for file_name in file_names:
@@ -86,14 +87,13 @@ class NGramProfile(object):
                 self._ngrams[ngram] = self._ngrams.get(ngram, 0) + 1
 
     def _normalize_ngram_freqs(self, ngram_sizes):
-        for ngram_size in ngram_sizes:
-            ngram_count = 0.0
-            for ngram in iterkeys(self._ngrams):
-                if len(ngram) == ngram_size:
-                    ngram_count += self._ngrams[ngram]
-            for ngram in iterkeys(self._ngrams):
-                if len(ngram) == ngram_size:
-                    self._ngrams[ngram] = self._ngrams[ngram] / ngram_count
+        # Count the total number of n-grams of each size (denominator).
+        ngram_counts = collections.defaultdict(float)
+        for ngram in iterkeys(self._ngrams):
+            ngram_counts[len(ngram)] += self._ngrams[ngram]
+        # Divide each n-gram count by the denominator.
+        for ngram in iterkeys(self._ngrams):
+            self._ngrams[ngram] /= ngram_counts[len(ngram)]
 
     def _build_ngram_profile(self, profile_len):
         top_ngrams = heapq.nlargest(profile_len,
